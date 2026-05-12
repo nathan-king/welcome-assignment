@@ -14,7 +14,7 @@ export default function LinkListItem({ link }: LinkListItemProps) {
             Shortened URL
           </p>
           {link.isPending ? (
-            <span className="text-foreground/50">Creating...</span>
+            <span className="text-foreground/50">Pending...</span>
           ) : (
             <a
               href={`/${link.code}`}

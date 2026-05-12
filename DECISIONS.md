@@ -8,8 +8,8 @@
 
 ## What polling interval did you pick for click counts, and why?
 
-- Interval of 2 seconds was chosen as click count data may become stale if the page is not refreshed (i.e. link accessed in another tab).
-- A 2 seconds interval felt like a good balance between responsiveness and simplicity for a small application.
+- A 2 second polling interval was chosen to match the assignment requirement that updates appear within approximately 2 seconds of a click occurring.
+- It also felt like a good balance between responsiveness and simplicity for a small application without introducing unnecessary complexity such as websockets or SSE.
 
 ## How does optimistic reconciliation work?
 
