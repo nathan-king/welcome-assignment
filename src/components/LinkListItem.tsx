@@ -40,7 +40,7 @@ export default function LinkListItem({ link }: LinkListItemProps) {
       </div>
 
       <div className="flex justify-end sm:ml-8">
-        <CopyButton />
+        <CopyButton value={`https://localhost:3000/${link.code}`} />
       </div>
     </li>
   );

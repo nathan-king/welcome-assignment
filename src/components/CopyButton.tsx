@@ -1,22 +1,49 @@
-import type { ButtonHTMLAttributes } from "react";
+"use client";
 
-type CopyButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children">;
+import type { ButtonHTMLAttributes } from "react";
+import { useState } from "react";
+
+type CopyButtonProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "children"
+> & {
+  value: string;
+};
 
 const className =
-  "min-h-6 rounded-md bg-black px-3 text-xs font-medium text-white transition hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-black/20 dark:bg-white dark:text-black dark:hover:bg-white/85 dark:focus:ring-white/25";
+  "absolute right-0 top-0 min-h-6 whitespace-nowrap rounded-md bg-black px-3 text-xs font-medium text-white transition hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-black/20 dark:bg-white dark:text-black dark:hover:bg-white/85 dark:focus:ring-white/25";
 
 export default function CopyButton({
   className: customClassName,
   type = "button",
+  value,
   ...props
 }: CopyButtonProps) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+    }
+  }
+
   return (
-    <button
-      type={type}
-      className={`${className} ${customClassName ?? ""}`}
-      {...props}
-    >
-      Copy
-    </button>
+    <span className="relative inline-block h-6 w-12 align-middle">
+      <button
+        type={type}
+        {...props}
+        onClick={handleCopy}
+        className={`${className} ${customClassName ?? ""}`}
+      >
+        {copied ? "Copied!" : "Copy"}
+      </button>
+    </span>
   );
 }
