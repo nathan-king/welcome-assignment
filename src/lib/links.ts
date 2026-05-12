@@ -1,14 +1,7 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-
-export type Link = {
-  id: number;
-  code: string;
-  originalUrl: string;
-  clickCount: number;
-  createdAt: string;
-};
+import type { Link } from "@/types/link";
 
 type LinkRow = {
   id: number;

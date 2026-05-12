@@ -1,6 +1,6 @@
 import CopyButton from "@/components/CopyButton";
-import type { Link as LinkData } from "@/lib/links";
-import NextLink from "next/link";
+import type { Link as LinkData } from "@/types/link";
+import Link from "next/link";
 
 type LinkListItemProps = {
   link: LinkData;
@@ -14,12 +14,16 @@ export default function LinkListItem({ link }: LinkListItemProps) {
           <p className="text-xs font-medium uppercase text-foreground/50">
             Shortened URL
           </p>
-          <NextLink
-            href={`/${link.code}`}
-            className="block truncate text-sm font-medium underline-offset-4 hover:underline"
-          >
-            /{link.code}
-          </NextLink>
+          {link.isPending ? (
+            <span className="text-foreground/50">Creating...</span>
+          ) : (
+            <Link
+              href={`/${link.code}`}
+              className="block truncate text-sm font-medium underline-offset-4 hover:underline"
+            >
+              /{link.code}
+            </Link>
+          )}
         </div>
 
         <div className="min-w-0">
@@ -40,7 +44,7 @@ export default function LinkListItem({ link }: LinkListItemProps) {
       </div>
 
       <div className="flex justify-end sm:ml-8">
-        <CopyButton value={`https://localhost:3000/${link.code}`} />
+        <CopyButton value={`http://localhost:3000/${link.code}`} />
       </div>
     </li>
   );
