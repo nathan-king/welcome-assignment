@@ -20,6 +20,8 @@ export default function Dashboard({ links }: DashboardProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [serverLinks, setServerLinks] = useState(links);
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const [failedOptimisticIds, setFailedOptimisticIds] = useState<number[]>([]);
 
   const [optimisticLinks, addOptimisticLink] = useOptimistic(
     serverLinks,
@@ -50,11 +52,18 @@ export default function Dashboard({ links }: DashboardProps) {
 
   function handleSubmit(formData: FormData) {
     const originalUrl = String(formData.get("originalUrl") || "").trim();
+    setError(null);
 
-    if (!originalUrl) return;
+    if (!originalUrl) {
+      setError("Please enter a URL.");
+
+      return;
+    }
+
+    const optimisticId = Date.now();
 
     const temporaryLink: Link = {
-      id: Date.now(),
+      id: optimisticId,
       code: "pending...",
       originalUrl,
       clickCount: 0,
@@ -66,9 +75,18 @@ export default function Dashboard({ links }: DashboardProps) {
     formRef.current?.reset();
 
     startTransition(async () => {
-      await createLinkAction(formData);
+      const result = await createLinkAction(formData);
+
+      if (!result.success) {
+        setError(result.error);
+        setFailedOptimisticIds((current) => [...current, optimisticId]);
+      }
     });
   }
+
+  const visibleLinks = optimisticLinks.filter(
+    (link) => !failedOptimisticIds.includes(link.id),
+  );
 
   return (
     <main className="font-sans flex min-h-screen flex-col items-center justify-center gap-6 p-6 text-center">
@@ -78,16 +96,19 @@ export default function Dashboard({ links }: DashboardProps) {
 
       <Form ref={formRef} action={handleSubmit} isPending={isPending} />
 
+      {error && <p className="max-w-xl text-sm text-red-600">{error}</p>}
+
       <section className="flex w-full max-w-3xl flex-col gap-4 text-left">
         <h2 className="text-lg font-semibold">Links</h2>
 
-        {optimisticLinks.length === 0 ? (
+        {visibleLinks.length === 0 ? (
           <p className="rounded-lg border border-black/10 bg-white p-4 text-sm text-foreground/60 shadow-sm dark:border-white/15 dark:bg-white/5">
             No links created yet.
           </p>
         ) : (
           <ul className="flex flex-col gap-3">
-            {optimisticLinks.map((link) => (
+            {/* Filter out failed optimistic links */}
+            {visibleLinks.map((link) => (
               <LinkListItem key={link.id} link={link} />
             ))}
           </ul>

@@ -21,12 +21,15 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
           <input
             id="originalUrl"
             name="originalUrl"
-            type="url"
-            required
+            // Below is commented to see server action failure
+            // type="url"
+            // required
             placeholder="https://example.com"
             className="min-h-11 flex-1 rounded-md border border-black/15 bg-white px-4 text-sm text-black outline-none transition focus:border-black focus:ring-2 focus:ring-black/10 dark:border-white/20 dark:bg-black/20 dark:text-white dark:focus:border-white dark:focus:ring-white/15"
           />
-          <Button type="submit">Shorten URL</Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Shortening..." : "Shorten URL"}
+          </Button>
         </form>
         <p className="max-w-xl text-xs text-foreground/55">
           Paste a full URL and submit it to create a short link.

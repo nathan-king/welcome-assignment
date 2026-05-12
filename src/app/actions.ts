@@ -3,6 +3,10 @@
 import { createLink } from "@/lib/links";
 import { revalidatePath } from "next/cache";
 
+export type CreateLinkResult =
+  | { success: true }
+  | { success: false; error: string };
+
 function generateCode(length = 6): string {
   return Math.random()
     .toString(36)
@@ -29,11 +33,22 @@ function validateUrl(value: FormDataEntryValue | null): string {
   }
 }
 
-export async function createLinkAction(formData: FormData) {
-  const originalUrl = validateUrl(formData.get("originalUrl"));
-  const code = generateCode();
+export async function createLinkAction(
+  formData: FormData,
+): Promise<CreateLinkResult> {
+  try {
+    const originalUrl = validateUrl(formData.get("originalUrl"));
 
-  createLink(code, originalUrl);
+    const code = generateCode();
 
-  revalidatePath("/");
+    createLink(code, originalUrl);
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Something went wrong.",
+    };
+  }
 }
