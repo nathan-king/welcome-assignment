@@ -87,7 +87,3 @@ Start the production server after building:
 ```bash
 npm run start
 ```
-
-## Notes
-
-Please disable client validation on forms for the server testing.
