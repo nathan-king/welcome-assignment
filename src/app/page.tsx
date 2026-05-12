@@ -1,3 +1,4 @@
+import Button from "@/components/Button";
 import Form from "@/components/Form";
 import { getLinks } from "@/lib/links";
 
@@ -23,9 +24,11 @@ export default function Home() {
           <ul>
             {links.map((link) => (
               <li key={link.id}>
-                <p>/{link.code}</p>
-                <p>{link.originalUrl}</p>
-                <p>{link.clickCount}</p>
+                <p>
+                  Shortened URL: /{link.code} <Button size="small">Copy</Button>
+                </p>
+                <p>Original URL: {link.originalUrl}</p>
+                <p>Visit count: {link.clickCount}</p>
               </li>
             ))}
           </ul>
