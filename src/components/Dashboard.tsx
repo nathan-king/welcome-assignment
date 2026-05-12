@@ -3,13 +3,7 @@
 import Form from "@/components/Form";
 import LinkListItem from "@/components/LinkListItem";
 import type { Link } from "@/types/link";
-import {
-  useState,
-  useEffect,
-  useOptimistic,
-  useRef,
-  useTransition,
-} from "react";
+import { useState, useEffect, useOptimistic, useTransition } from "react";
 import { createLinkAction } from "@/app/actions";
 
 type DashboardProps = {
@@ -17,11 +11,12 @@ type DashboardProps = {
 };
 
 export default function Dashboard({ links }: DashboardProps) {
-  const formRef = useRef<HTMLFormElement>(null);
   const [serverLinks, setServerLinks] = useState(links);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [failedOptimisticIds, setFailedOptimisticIds] = useState<number[]>([]);
+  const [settledOptimisticIds, setSettledOptimisticIds] = useState<
+    Array<string | number>
+  >([]);
 
   const [optimisticLinks, addOptimisticLink] = useOptimistic(
     serverLinks,
@@ -60,7 +55,7 @@ export default function Dashboard({ links }: DashboardProps) {
       return;
     }
 
-    const optimisticId = Date.now();
+    const optimisticId = crypto.randomUUID();
 
     const temporaryLink: Link = {
       id: optimisticId,
@@ -71,21 +66,28 @@ export default function Dashboard({ links }: DashboardProps) {
       isPending: true,
     };
 
-    addOptimisticLink(temporaryLink);
-    formRef.current?.reset();
-
     startTransition(async () => {
+      addOptimisticLink(temporaryLink);
+
       const result = await createLinkAction(formData);
 
       if (!result.success) {
         setError(result.error);
-        setFailedOptimisticIds((current) => [...current, optimisticId]);
+        setSettledOptimisticIds((current) => [...current, optimisticId]);
+
+        return;
       }
+
+      setSettledOptimisticIds((current) => [...current, optimisticId]);
+      setServerLinks((currentLinks) => [
+        result.link,
+        ...currentLinks.filter((link) => link.id !== result.link.id),
+      ]);
     });
   }
 
   const visibleLinks = optimisticLinks.filter(
-    (link) => !failedOptimisticIds.includes(link.id),
+    (link) => !settledOptimisticIds.includes(link.id),
   );
 
   return (
@@ -94,7 +96,7 @@ export default function Dashboard({ links }: DashboardProps) {
         <h1 className="text-3xl font-semibold">URL Shortener</h1>
       </section>
 
-      <Form ref={formRef} action={handleSubmit} isPending={isPending} />
+      <Form action={handleSubmit} isPending={isPending} />
 
       {error && <p className="max-w-xl text-sm text-red-600">{error}</p>}
 
@@ -107,7 +109,6 @@ export default function Dashboard({ links }: DashboardProps) {
           </p>
         ) : (
           <ul className="flex flex-col gap-3">
-            {/* Filter out failed optimistic links */}
             {visibleLinks.map((link) => (
               <LinkListItem key={link.id} link={link} />
             ))}

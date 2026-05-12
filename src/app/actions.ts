@@ -1,11 +1,20 @@
 "use server";
 
 import { createLink } from "@/lib/links";
+import type { Link } from "@/types/link";
 import { revalidatePath } from "next/cache";
 
 export type CreateLinkResult =
-  | { success: true }
+  | { success: true; link: Link }
   | { success: false; error: string };
+
+const TEST_SERVER_DELAY_MS = 3000;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 function generateCode(length = 6): string {
   return Math.random()
@@ -37,14 +46,16 @@ export async function createLinkAction(
   formData: FormData,
 ): Promise<CreateLinkResult> {
   try {
+    await delay(TEST_SERVER_DELAY_MS);
+
     const originalUrl = validateUrl(formData.get("originalUrl"));
 
     const code = generateCode();
 
-    createLink(code, originalUrl);
+    const link = createLink(code, originalUrl);
 
     revalidatePath("/");
-    return { success: true };
+    return { success: true, link };
   } catch (error) {
     return {
       success: false,

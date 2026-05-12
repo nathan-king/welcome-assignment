@@ -12,4 +12,10 @@
 
 ## How does optimistic reconciliation work?
 
+- When the form is submitted, Dashboard immediately adds a temporary pending link to the top of the list.
+- If the server action succeeds, polling refreshes the list from SQLite and replaces the pending item with the real saved link.
+- If the server action fails, the pending item is removed and the error message is shown to the user.
+
 ## What is one thing you would improve with more time?
+
+- I would improve the short code generation by adding collision handling and a more robust generation strategy for production-scale usage.

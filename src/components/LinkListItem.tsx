@@ -43,7 +43,7 @@ export default function LinkListItem({ link }: LinkListItemProps) {
       </div>
 
       <div className="flex justify-end sm:ml-8">
-        <CopyButton value={`http://localhost:3000/${link.code}`} />
+        {!link.isPending && <CopyButton value={`/${link.code}`} />}
       </div>
     </li>
   );

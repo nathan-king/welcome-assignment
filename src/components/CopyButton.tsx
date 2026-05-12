@@ -23,7 +23,11 @@ export default function CopyButton({
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(value);
+      const textToCopy = value.startsWith("/")
+        ? `${window.location.origin}${value}`
+        : value;
+
+      await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
 
       setTimeout(() => {

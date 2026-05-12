@@ -1,5 +1,5 @@
 export type Link = {
-  id: number;
+  id: string | number;
   code: string;
   originalUrl: string;
   clickCount: number;

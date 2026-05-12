@@ -2,6 +2,13 @@
 
 A simple URL shortener built with Next.js 15 App Router, TypeScript, Tailwind CSS, and SQLite via `better-sqlite3`.
 
+## Features
+
+- Create short links from long URLs.
+- Visit a short link at `/{code}` and redirect to the original URL.
+- Track click counts for each short link.
+- Update click counts in the dashboard without refreshing the page.
+
 ## Requirements
 
 - Node.js `22.12.0`
@@ -63,6 +70,12 @@ Run linting:
 npm run lint
 ```
 
+Run TypeScript checks:
+
+```bash
+npx tsc --noEmit
+```
+
 Create a production build:
 
 ```bash
@@ -74,3 +87,7 @@ Start the production server after building:
 ```bash
 npm run start
 ```
+
+## Notes
+
+Please disable client validation on forms for the server testing.
