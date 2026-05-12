@@ -3,7 +3,13 @@
 import Form from "@/components/Form";
 import LinkListItem from "@/components/LinkListItem";
 import type { Link } from "@/types/link";
-import { useOptimistic, useRef, useTransition } from "react";
+import {
+  useState,
+  useEffect,
+  useOptimistic,
+  useRef,
+  useTransition,
+} from "react";
 import { createLinkAction } from "@/app/actions";
 
 type DashboardProps = {
@@ -12,12 +18,35 @@ type DashboardProps = {
 
 export default function Dashboard({ links }: DashboardProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const [serverLinks, setServerLinks] = useState(links);
   const [isPending, startTransition] = useTransition();
 
   const [optimisticLinks, addOptimisticLink] = useOptimistic(
-    links,
+    serverLinks,
     (currentLinks, newLink: Link) => [newLink, ...currentLinks],
   );
+
+  useEffect(() => {
+    const intervalId = window.setInterval(async () => {
+      try {
+        const response = await fetch("/api/links", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) return;
+
+        const data = (await response.json()) as { links: Link[] };
+
+        setServerLinks(data.links);
+      } catch (error) {
+        console.error("Failed to refresh links:", error);
+      }
+    }, 2000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   function handleSubmit(formData: FormData) {
     const originalUrl = String(formData.get("originalUrl") || "").trim();

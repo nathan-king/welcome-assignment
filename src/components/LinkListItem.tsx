@@ -1,6 +1,5 @@
 import CopyButton from "@/components/CopyButton";
 import type { Link as LinkData } from "@/types/link";
-import Link from "next/link";
 
 type LinkListItemProps = {
   link: LinkData;
@@ -17,12 +16,12 @@ export default function LinkListItem({ link }: LinkListItemProps) {
           {link.isPending ? (
             <span className="text-foreground/50">Creating...</span>
           ) : (
-            <Link
+            <a
               href={`/${link.code}`}
               className="block truncate text-sm font-medium underline-offset-4 hover:underline"
             >
               /{link.code}
-            </Link>
+            </a>
           )}
         </div>
 
