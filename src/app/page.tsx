@@ -1,5 +1,5 @@
-import Button from "@/components/Button";
 import Form from "@/components/Form";
+import LinkListItem from "@/components/LinkListItem";
 import { getLinks } from "@/lib/links";
 
 export const dynamic = "force-dynamic";
@@ -15,21 +15,17 @@ export default function Home() {
 
       <Form />
 
-      <section>
-        <h2>Links</h2>
+      <section className="flex w-full max-w-3xl flex-col gap-4 text-left">
+        <h2 className="text-lg font-semibold">Links</h2>
 
         {links.length === 0 ? (
-          <p>No links created yet.</p>
+          <p className="rounded-lg border border-black/10 bg-white p-4 text-sm text-foreground/60 shadow-sm dark:border-white/15 dark:bg-white/5">
+            No links created yet.
+          </p>
         ) : (
-          <ul>
+          <ul className="flex flex-col gap-3">
             {links.map((link) => (
-              <li key={link.id}>
-                <p>
-                  Shortened URL: /{link.code} <Button size="small">Copy</Button>
-                </p>
-                <p>Original URL: {link.originalUrl}</p>
-                <p>Visit count: {link.clickCount}</p>
-              </li>
+              <LinkListItem key={link.id} link={link} />
             ))}
           </ul>
         )}

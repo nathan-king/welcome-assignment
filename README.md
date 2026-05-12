@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Welcome Assignment - URL Shortener
 
-## Getting Started
+A simple URL shortener built with Next.js 15 App Router, TypeScript, Tailwind CSS, and SQLite via `better-sqlite3`.
 
-First, run the development server:
+## Requirements
+
+- Node.js `22.12.0`
+- npm `11.7.0`
+
+This project includes a Volta pin in `package.json`, so if you use Volta the correct Node and npm versions will be selected automatically.
+
+## Setup
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+If `better-sqlite3` was installed with a different Node version, rebuild it:
+
+```bash
+npm rebuild better-sqlite3
+```
+
+## Run Locally
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Database
 
-## Learn More
+The app uses SQLite. On startup, the server database module creates:
 
-To learn more about Next.js, take a look at the following resources:
+```text
+data/app.db
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The database includes a `links` table with:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `id`
+- `code`
+- `original_url`
+- `click_count`
+- `created_at`
 
-## Deploy on Vercel
+The `data/` directory is runtime data and should not be committed.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Run linting:
+
+```bash
+npm run lint
+```
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+Start the production server after building:
+
+```bash
+npm run start
+```
